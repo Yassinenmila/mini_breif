@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,13 +8,16 @@
 </head>
 <style>
     body {
-        display:flex;
+        display: flex;
         height: 100vh;
         justify-content: center;
         align-items: center;
         flex-direction: column;
         gap: 30px;
+        font-family: cursive, sans-serif;
+        background-color: indigo;
     }
+
     .character {
         display: flex;
         justify-content: center;
@@ -22,60 +26,89 @@
         border-radius: 20px;
         box-shadow: inset;
         background-color: bisque;
+        font-size: 20px;
+        padding: 30px;
     }
+
     .character img {
         border-radius: 20px;
     }
-    .btn{
+
+    .btn {
         display: flex;
         gap: 60px;
     }
+
     #like {
-        background-color:rgb(21, 255, 0);
+        background-color: rgb(21, 255, 0);
         width: 100px;
-        height: 40px;
+        height: 50px;
         font-size: 30px;
     }
-    #dislike{
-        width: 100px;
-        height:50px;
+
+    #dislike {
+        width: 120px;
+        height: 50px;
         font-size: 30px;
+        background-color: crimson;
+    }
+    #menu {
+        display: flex;
+        position:absolute;
+        right:0;
+        top:0;
+        border-radius: 50px;
     }
 </style>
+
 <body>
     <div id="characters"></div>
     <div class="btn">
-    <button id="dislike">Dislike</button>
-    <button id="like">like</button>
+        <button id="dislike">Dislike</button>
+        <button id="like">like</button>
     </div>
+    <button id="menu"><img src="./icons8-menu-128.png"></button>
     <script>
-        const max = 42;
-        let x=Math.floor(Math.random()*826)+1;
+        let new_character = null;
+        const max = 826;
+        const like = document.querySelector("#like");
+        const dislike = document.querySelector("#dislike");
+        let x = Math.floor(Math.random() * max) + 1;
         fetchdata();
         async function fetchdata() {
-            try{
-
+            try {
                 const response = await fetch(`https://rickandmortyapi.com/api/character/${x}`)
-                if (!response.ok){
+                if (!response.ok) {
                     throw new Error("404 not found");
                 }
                 const data = await response.json();
                 console.log(data)
-                
-                    const div =document.createElement("div");
-                    div.classList.add("character");
-                    div.innerHTML=`
+                new_character = data;
+                const div = document.createElement("div");
+                div.classList.add("character");
+                div.innerHTML = `
                     <h2>${data.name}</h2>
                     <img src="${data.image}">
                     <p>Status : ${data.status}</p>
                     <p>Gender : ${data.gender}</p>
-                    <p>origin : ${data.origin.name}</p>`;       
-                    document.querySelector("#characters").appendChild(div);  
+                    <p>origin : ${data.origin.name}</p>`;
+                document.querySelector("#characters").appendChild(div);
+
             }
-            catch(error){
+            catch (error) {
                 console.log(error)
             }
         }
+        like.onclick = function () {
+            let characters = JSON.parse(localStorage.getItem("characters")) || [];
+            characters.push(new_character);
+            localStorage.setItem("characters", JSON.stringify(characters));
+            location.reload();
+        }
+        dislike.onclick = function () {
+            location.reload();
+        }
     </script>
 </body>
+
 </html>
